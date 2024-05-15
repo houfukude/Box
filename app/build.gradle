@@ -2,9 +2,16 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
-def static buildTime() {
-    return new Date().format("yyyyMMdd_HHmm", TimeZone.getTimeZone("GMT+08:00"))
+def static getBuildTime() {
+    String dateTime = System.getenv("DATE_TIME")
+    if (dateTime == null) {
+        return new Date().format("yyyyMMdd_HHmm", TimeZone.getTimeZone("GMT+08:00"))
+    } else {
+        return dateTime
+    }
 }
+
+String buildTime = getBuildTime()
 
 def static updateServer() {
     return "\"https://api.github.com/repos/" + System.getenv().getOrDefault("REPO", "houfukude/Box") + "/releases/latest\""
@@ -15,12 +22,15 @@ android {
 
     namespace 'com.github.tvbox.osc'
     defaultConfig {
+
+
         applicationId 'com.github.tvbox.osc.tk'
         minSdkVersion 21
         targetSdkVersion 29
         versionCode 1
-        versionName "1.0.".concat(buildTime())
+        versionName "1.0.".concat(buildTime)
         multiDexEnabled true
+        buildConfigField "String", "BUILD_TIME", '"' + buildTime + '"'
         //设置room的Schema的位置
         javaCompileOptions {
             annotationProcessorOptions {
@@ -62,8 +72,7 @@ android {
 
     applicationVariants.configureEach { variant ->
         variant.outputs.configureEach {
-            def fileName = outputFileName.replace("app", "TVBOX_" + android.defaultConfig.versionName)
-            fileName = fileName.replace("1.0.", "")
+            def fileName = outputFileName.replace("app", "TVBOX_" + buildTime)
             fileName = fileName.replace("-release", "")
             println fileName
             outputFileName = new File(fileName)

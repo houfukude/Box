@@ -58,7 +58,7 @@ public class AboutDialog extends BaseDialog {
             try {
                 Date current = new SimpleDateFormat("yyyyMMdd_HHmm", Locale.CHINA)
                         .parse(BuildConfig.VERSION_NAME.replace("1.0.", ""));
-                Date newVersion = new SimpleDateFormat("yyyyMMdd", Locale.CHINA)
+                Date newVersion = new SimpleDateFormat("yyyyMMdd_HHmm", Locale.CHINA)
                         .parse(this.version);
                 if (current != null && newVersion != null) {
                     // 目前 通过对比当前系统的 VERSION_NAME 和 github release 页面上标记的 版本号对比 判断是否为新包
@@ -110,7 +110,7 @@ public class AboutDialog extends BaseDialog {
      * 通过检测 Github release API 来获取更新信息从而实现在线更新
      */
     private void CheckUpdate() {
-        aboutUpdateButton.setText(String.format("当前版本：%s", BuildConfig.VERSION_NAME));
+        aboutUpdateButton.setText(String.format("当前版本：%s", BuildConfig.BUILD_TIME));
         OkGo.<String>get(BuildConfig.SERVER)
                 .execute(new StringCallback() {
                     @Override
@@ -122,7 +122,7 @@ public class AboutDialog extends BaseDialog {
                             aboutUpdateButton.setText(String.format("发现新版本：%s 点击更新", downloadItem.version));
                             aboutUpdateButton.setEnabled(true);
                         } else {
-                            aboutUpdateButton.setText(String.format("当前版本：%s 已是最新！", BuildConfig.VERSION_NAME));
+                            aboutUpdateButton.setText(String.format("当前版本：%s 已是最新！", BuildConfig.BUILD_TIME));
                         }
                     }
 
@@ -169,7 +169,7 @@ public class AboutDialog extends BaseDialog {
         aboutUpdateButton.setText(String.format("正在下载：%s", downloadItem.fileName));
         if (downloadItem.downloadURL == null || downloadItem.fileName == null) {
             Toast.makeText(getContext(), "下载错误： 下载地址或文件名为空", Toast.LENGTH_LONG).show();
-            aboutUpdateButton.setText(String.format("当前版本：%s", BuildConfig.VERSION_NAME));
+            aboutUpdateButton.setText(String.format("当前版本：%s", BuildConfig.BUILD_TIME));
             return;
         }
         // /storage/emulated/0/Download/${applicationId}

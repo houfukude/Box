@@ -101,6 +101,7 @@ public class App extends MultiDexApplication {
         }
 
         Log.d("TVBox", "update SERVER : " + BuildConfig.SERVER);
+        Log.d("TVBox", "build TIME : " + BuildConfig.BUILD_TIME);
     }
 
     public static P2PClass getp2p() {

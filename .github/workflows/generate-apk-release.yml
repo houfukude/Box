@@ -20,7 +20,7 @@ jobs:
 
       # Set Current Date As Env Variable
       - name: Set current date as env variable
-        run: echo "date_today=$(date +'%Y%m%d')" >> $GITHUB_ENV
+        run: echo "build_time=$(date +'%Y%m%d_%H%M')" >> $GITHUB_ENV
 
       - name: Set Up JDK
         uses: actions/setup-java@v3
@@ -36,9 +36,10 @@ jobs:
         run: echo "${{ secrets.SIGNING_KEY }}" | base64 -d > ./keystore.jks
 
       # Create APK Release
-      - name: Build ${{ github.repository }} - ${{ env.main_project_module }} - ${{ env.date_today }} - ${{ github.event.inputs.tag }}
+      - name: Build ${{ github.repository }} - ${{ env.main_project_module }} - ${{ env.build_time }} - ${{ github.event.inputs.tag }}
         env:
           REPO: ${{ github.repository }}
+          BUILD_TIME: ${{ env.build_time }}
           ALIAS: ${{ secrets.ALIAS }}
           KEY_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
@@ -47,7 +48,7 @@ jobs:
       - name: Release - ${{ steps.tag.outputs.tag }}
         uses: softprops/action-gh-release@v1
         with:
-          name: ${{ env.date_today }}
+          name: ${{ env.build_time }}
           body: ${{ github.event.head_commit.message }}
           tag_name: ${{ github.event.inputs.tag }}
           files: ${{ env.main_project_module }}/build/outputs/apk/release/*.apk
