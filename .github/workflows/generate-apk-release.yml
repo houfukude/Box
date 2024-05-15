@@ -18,11 +18,18 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Add the custom timezone database file
+        run: |
+          sudo mkdir -p /usr/share/zoneinfo/Asia
+          sudo cp /tmp/Asia/Shanghai /usr/share/zoneinfo/Asia/
+          sudo ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+
+
       # Set Current Date As Env Variable
       - name: Set current date as env variable
         run: echo "build_time=$(date +'%Y%m%d_%H%M')" >> $GITHUB_ENV
 
-      - name: Set Up JDK
+      - name: Set Up JDK  - ${{ env.build_time }}
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu' # See 'Supported distributions' for available options
