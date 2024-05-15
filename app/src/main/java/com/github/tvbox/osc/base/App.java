@@ -1,11 +1,13 @@
 package com.github.tvbox.osc.base;
 
 import android.os.Environment;
+import android.util.Log;
 
 import androidx.multidex.MultiDexApplication;
 
 import com.github.catvod.crawler.JarLoader;
 import com.github.catvod.crawler.JsLoader;
+import com.github.tvbox.osc.BuildConfig;
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.callback.EmptyCallback;
 import com.github.tvbox.osc.callback.LoadingCallback;
@@ -97,6 +99,8 @@ public class App extends MultiDexApplication {
                                     .build()))
                     .build();
         }
+
+        Log.d("TVBox", "update SERVER : " + BuildConfig.SERVER);
     }
 
     public static P2PClass getp2p() {

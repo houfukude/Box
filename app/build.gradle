@@ -40,11 +40,13 @@ android {
 
     buildTypes {
         debug {
+            buildConfigField("String", "SERVER", System.getenv().getOrDefault("SERVER","\"https://api.github.com/repos/takagen99/Box/releases/latest\""))
             applicationIdSuffix ".debug"
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             minifyEnabled true
         }
         release {
+            buildConfigField("String", "SERVER", System.getenv().getOrDefault("SERVER","\"https://api.github.com/repos/takagen99/Box/releases/latest\""))
             signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             minifyEnabled true

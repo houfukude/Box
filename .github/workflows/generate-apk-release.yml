@@ -18,7 +18,7 @@ jobs:
 
       # Set Current Date As Env Variable
       - name: Set current date as env variable
-        run: echo "date_today=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+        run: echo "date_today=$(date +'%Y%m%d')" >> $GITHUB_ENV
 
       # Set Repository Name As Env Variable
       - name: Set repository name as env variable
@@ -40,15 +40,26 @@ jobs:
       # Create APK Release
       - name: Build apk release project (APK) - ${{ env.main_project_module }} - ${{ env.date_today }}
         env:
+          SERVER: "https://api.github.com/repos/${{ env.GITHUB_REPOSITORY }}/releases/latest"
           ALIAS: ${{ secrets.ALIAS }}
           KEY_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: ./gradlew assembleRelease  --build-cache --parallel --daemon --warning-mode all
 
+      - name: Tag the repository
+        id: tag
+        run: |
+          # See https://docs.github.com/en/get-started/using-git/dealing-with-special-characters-in-branch-and-tag-names
+          TAG=v$(date -Iseconds | sed 's/[T:\+]/-/g')
+          echo "$TAG"
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+          git tag -a $TAG -m "Published version $TAG" ${GITHUB_SHA}
+          git push origin $TAG
+
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
           name: ${{ env.date_today }}
-          body: ${{ github.event.inputs.tag }}
-          tag_name: ${{ github.event.inputs.tag }}
+          body: ${{ github.event.inputs.version }}
+          tag_name: ${{ steps.tag.outputs.tag }}
 

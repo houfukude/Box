@@ -16,7 +16,6 @@ import androidx.core.content.FileProvider;
 import com.github.tvbox.osc.BuildConfig;
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.bean.ApiGithubData;
-import com.github.tvbox.osc.bean.ApiMetaData;
 import com.github.tvbox.osc.ui.activity.HomeActivity;
 import com.github.tvbox.osc.util.DefaultConfig;
 import com.google.gson.Gson;
@@ -40,9 +39,6 @@ import java.util.Locale;
 public class AboutDialog extends BaseDialog {
 
     public static final String APK_TYPE = "application/vnd.android.package-archive";
-
-    // 自定义服务器 只需要 有 apk 和对应的 output-metadata.json 文件
-    public static final String SERVER = "http://10.10.10.10:8000/apk/debug/";
 
     public static class DownloadItem {
         String downloadURL;
@@ -82,26 +78,6 @@ public class AboutDialog extends BaseDialog {
             }
 
         }
-
-        public DownloadItem(ApiMetaData data) {
-            try {
-                ApiMetaData.ElementsItem item = data.elements.get(0);
-                this.version = item.versionName;
-                this.fileName = item.outputFile;
-                this.downloadURL = SERVER + item.outputFile;
-                Date current = new SimpleDateFormat("yyyyMMdd_HHmm", Locale.CHINA)
-                        .parse(BuildConfig.VERSION_NAME.replace("1.0.", ""));
-                Date newVersion = new SimpleDateFormat("yyyyMMdd_HHmm", Locale.CHINA)
-                        .parse(this.version.replace("1.0.", ""));
-                if (current != null && newVersion != null) {
-                    // 目前 通过对比当前系统的 VERSION_NAME 和 github release 页面上标记的 版本号对比 判断是否为新包
-                    this.isNewVersion = current.before(newVersion);
-                }
-            } catch (ParseException e) {
-                this.isNewVersion = false;
-            }
-
-        }
     }
 
     private DownloadItem downloadItem;
@@ -135,16 +111,12 @@ public class AboutDialog extends BaseDialog {
      */
     private void CheckUpdate() {
         aboutUpdateButton.setText(String.format("当前版本：%s", BuildConfig.VERSION_NAME));
-        String updateURL = "https://api.github.com/repos/houfukude/Box/releases/latest";
-//        String updateURL = SERVER + "output-metadata.json";
-        OkGo.<String>get(updateURL)
+        OkGo.<String>get(BuildConfig.SERVER)
                 .execute(new StringCallback() {
                     @Override
                     public void onSuccess(Response<String> response) {
                         ApiGithubData apiGithubData = new Gson().fromJson(response.body(), ApiGithubData.class);
                         downloadItem = new DownloadItem(apiGithubData);
-//                        ApiMetaData apiMetaData = new Gson().fromJson(response.body(), ApiMetaData.class);
-//                        downloadItem = new DownloadItem(apiMetaData);
 
                         if (downloadItem.isNewVersion) {
                             aboutUpdateButton.setText(String.format("发现新版本：%s 点击更新", downloadItem.version));
