@@ -60,6 +60,16 @@ android {
         }
     }
 
+    applicationVariants.configureEach { variant ->
+        variant.outputs.configureEach {
+            def fileName = outputFileName.replace("app", "TVBOX_" + android.defaultConfig.versionName)
+            fileName = fileName.replace("1.0.", "")
+            fileName = fileName.replace("-release", "")
+            println fileName
+            outputFileName = new File(fileName)
+        }
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
