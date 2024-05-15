@@ -7,7 +7,7 @@ def static buildTime() {
 }
 
 def static updateServer() {
-    return "\"https://api.github.com/" + System.getenv().getOrDefault("REPO", "houfukude/Box") + "/releases/latest\""
+    return "\"https://api.github.com/repos/" + System.getenv().getOrDefault("REPO", "houfukude/Box") + "/releases/latest\""
 }
 
 android {
