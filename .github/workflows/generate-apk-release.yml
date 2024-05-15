@@ -4,11 +4,11 @@ env:
   main_project_module: app
 
 on:
-#  push:
-#    branches:
-#      - main
-#  pull_request:
   workflow_dispatch:
+    inputs:
+      tag:
+        description: Tag to Release
+        required: true
 
 jobs:
   build:
@@ -20,11 +20,7 @@ jobs:
       - name: Set current date as env variable
         run: echo "date_today=$(date +'%Y%m%d')" >> $GITHUB_ENV
 
-      # Set Repository Name As Env Variable
-      - name: Set repository name as env variable
-        run: echo "repository_name=$(echo '${{ github.repository }}' | awk -F '/' '{print $2}')" >> $GITHUB_ENV
-
-      - name: Set Up JDK - ${{ github.event.inputs.version }}
+      - name: Set Up JDK ${{ github.event.repository.name }} - ${{ env.main_project_module }} - ${{ env.date_today }} - ${{ github.event.inputs.tag }}
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu' # See 'Supported distributions' for available options
@@ -38,27 +34,18 @@ jobs:
         run: echo "${{ secrets.SIGNING_KEY }}" | base64 -d > ./keystore.jks
 
       # Create APK Release
-      - name: Build apk release project (APK) - ${{ env.main_project_module }} - ${{ env.date_today }}
+      - name: Build ${{ github.event.repository.name }} - ${{ env.main_project_module }} - ${{ env.date_today }} - ${{ github.event.inputs.tag }}
         env:
+          REPO: ${{ github.event.repository.name }}
           ALIAS: ${{ secrets.ALIAS }}
           KEY_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: ./gradlew assembleRelease  --build-cache --parallel --daemon --warning-mode all
-
-      - name: Tag the repository
-        id: tag
-        run: |
-          # See https://docs.github.com/en/get-started/using-git/dealing-with-special-characters-in-branch-and-tag-names
-          TAG=v$(date -Iseconds | sed 's/[T:\+]/-/g')
-          echo "$TAG"
-          echo "tag=$TAG" >> $GITHUB_OUTPUT
-          git tag -a $TAG -m "Published version $TAG" ${GITHUB_SHA}
-          git push origin $TAG
 
       - name: Release - ${{ steps.tag.outputs.tag }}
         uses: softprops/action-gh-release@v1
         with:
           name: ${{ env.date_today }}
           body: ${{ github.event.inputs.version }}
-          tag_name: ${{ steps.tag.outputs.tag }}
+          tag_name: ${{ github.event.inputs.tag }}
 
