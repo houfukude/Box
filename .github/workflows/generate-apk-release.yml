@@ -1,4 +1,5 @@
 name: Generated APK
+
 env:
   # The name of the main module repository
   main_project_module: app
@@ -12,7 +13,8 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
+    # runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
 
@@ -48,4 +50,5 @@ jobs:
           name: ${{ env.date_today }}
           body: ${{ github.event.head_commit.message }}
           tag_name: ${{ github.event.inputs.tag }}
+          files: ${{ env.main_project_module }}/build/outputs/apk/release/*.apk
 
