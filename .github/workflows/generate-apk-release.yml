@@ -34,27 +34,21 @@ jobs:
       - name: Change wrapper permissions
         run: chmod +x ./gradlew
 
+      - name: Create keystore
+        run: echo "${{ secrets.SIGNING_KEY }}" | base64 -d > ./keystore.jks
+
       # Create APK Release
-      - name: Build apk release project (APK) - ${{ env.main_project_module }} module
+      - name: Build apk release project (APK) - ${{ env.main_project_module }} - ${{ env.date_today }}
+        env:
+          ALIAS: ${{ secrets.ALIAS }}
+          KEY_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: ./gradlew assembleRelease  --build-cache --parallel --daemon --warning-mode all
 
-      - name: Sign app APK
-        uses: r0adkll/sign-android-release@v1
-        # ID used to access action output
-        id: sign_app
+      - name: Release
+        uses: softprops/action-gh-release@v1
         with:
-          releaseDirectory: app/build/outputs/apk/release
-          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
-          alias: ${{ secrets.ALIAS }}
-          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
-          keyPassword: ${{ secrets.KEY_PASSWORD }}
-        env:
-          # override default build-tools version (33.0.0) -- optional
-          BUILD_TOOLS_VERSION: "34.0.0"
+          name: ${{ env.date_today }}
+          body: ${{ github.event.inputs.tag }}
+          tag_name: ${{ github.event.inputs.tag }}
 
-      # Noted For Output [main_project_module]/build/outputs/apk/release/
-      - name: Upload APK Release - ${{ env.repository_name }}
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ env.date_today }} - ${{ env.repository_name }} - APK(s) release generated
-          path: ${{ env.main_project_module }}/build/outputs/apk/release/

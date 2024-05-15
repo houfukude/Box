@@ -9,6 +9,7 @@ def static buildTime() {
 android {
     compileSdk 33
 
+    namespace 'com.github.tvbox.osc'
     defaultConfig {
         applicationId 'com.github.tvbox.osc.tk'
         minSdkVersion 21
@@ -28,6 +29,15 @@ android {
         exclude 'META-INF/DEPENDENCIES'
     }
 
+    signingConfigs {
+        release {
+            storeFile = new File(rootProject.projectDir, "keystore.jks")
+            keyAlias = System.getenv("ALIAS")
+            storePassword = System.getenv("KEY_STORE_PASSWORD")
+            keyPassword = System.getenv("KEY_PASSWORD")
+        }
+    }
+
     buildTypes {
         debug {
             applicationIdSuffix ".debug"
@@ -35,6 +45,7 @@ android {
             minifyEnabled true
         }
         release {
+            signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             minifyEnabled true
             ndk {
