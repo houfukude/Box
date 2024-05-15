@@ -3,7 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
 def static getBuildTime() {
-    String dateTime = System.getenv("DATE_TIME")
+    String dateTime = System.getenv("BUILD_TIME")
     if (dateTime == null) {
         return new Date().format("yyyyMMdd_HHmm", TimeZone.getTimeZone("GMT+08:00"))
     } else {
