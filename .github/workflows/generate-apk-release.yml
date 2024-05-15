@@ -20,7 +20,7 @@ jobs:
       - name: Set current date as env variable
         run: echo "date_today=$(date +'%Y%m%d')" >> $GITHUB_ENV
 
-      - name: Set Up JDK ${{ github.repository }} - ${{ env.main_project_module }} - ${{ env.date_today }} - ${{ github.event.inputs.tag }}
+      - name: Set Up JDK
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu' # See 'Supported distributions' for available options
@@ -46,6 +46,6 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           name: ${{ env.date_today }}
-          body: ${{ github.event.inputs.version }}
+          body: ${{ github.event.head_commit.message }}
           tag_name: ${{ github.event.inputs.tag }}
 
