@@ -38,16 +38,16 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Create keystore
-        run: echo "${{ secrets.SIGNING_KEY }}" | base64 -d > ./keystore.jks
+        run: echo "${{ secrets.SIGNING_KEY }}" | base64 -d > ./TVBoxOSC.jks
 
       # Create APK Release
       - name: Build ${{ github.repository }} - ${{ env.main_project_module }} - ${{ env.build_time }} - ${{ github.event.inputs.tag }}
         env:
           REPO: ${{ github.repository }}
           BUILD_TIME: ${{ env.build_time }}
-          ALIAS: ${{ secrets.ALIAS }}
-          KEY_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
-          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          ALIAS: ${{ secrets.ALIAS }}  # TVBoxOSC
+          KEY_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }} # TVBoxOSC
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }} # TVBoxOSC
         run: ./gradlew assembleRelease  --build-cache --parallel --daemon --warning-mode all
 
       - name: Release - ${{ steps.tag.outputs.tag }}

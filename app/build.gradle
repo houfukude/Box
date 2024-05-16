@@ -45,7 +45,7 @@ android {
 
     signingConfigs {
         release {
-            storeFile = new File(rootProject.projectDir, "keystore.jks")
+            storeFile = new File(rootProject.projectDir, "TVBoxOSC.jks")
             keyAlias = System.getenv("ALIAS")
             storePassword = System.getenv("KEY_STORE_PASSWORD")
             keyPassword = System.getenv("KEY_PASSWORD")
