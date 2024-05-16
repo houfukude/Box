@@ -791,10 +791,11 @@ public class SourceViewModel extends ViewModel {
                     }
                 }
             } catch (Throwable th) {
-
+                LOG.e(th);
             }
             return data;
         } catch (Exception e) {
+            LOG.e(e);
             return null;
         }
     }

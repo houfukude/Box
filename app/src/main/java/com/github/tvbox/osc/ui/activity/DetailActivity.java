@@ -732,7 +732,7 @@ public class DetailActivity extends BaseActivity {
         sourceViewModel.detailResult.observe(this, new Observer<AbsXml>() {
             @Override
             public void onChanged(AbsXml absXml) {
-                if (absXml != null && absXml.movie != null && absXml.movie.videoList != null && absXml.movie.videoList.size() > 0) {
+                if (absXml != null && absXml.movie != null && absXml.movie.videoList != null && !absXml.movie.videoList.isEmpty()) {
                     showSuccess();
                     if (!TextUtils.isEmpty(absXml.msg) && !absXml.msg.equals("数据列表")) {
                         Toast.makeText(DetailActivity.this, absXml.msg, Toast.LENGTH_SHORT).show();

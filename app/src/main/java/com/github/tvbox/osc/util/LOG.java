@@ -2,6 +2,8 @@ package com.github.tvbox.osc.util;
 
 import android.util.Log;
 
+import androidx.annotation.Nullable;
+
 import com.github.tvbox.osc.event.LogEvent;
 
 import org.greenrobot.eventbus.EventBus;
@@ -12,7 +14,7 @@ import org.greenrobot.eventbus.EventBus;
  * @description:
  */
 public class LOG {
-    private static String TAG = "TVBox";
+    private static final String TAG = "TVBox";
 
     public static void e(Throwable t) {
         Log.e(TAG, t.getMessage(), t);
@@ -24,23 +26,23 @@ public class LOG {
         EventBus.getDefault().post(new LogEvent(String.format("【E/%s】=>>>", tag) + Log.getStackTraceString(t)));
     }
 
-    public static void e(String msg) {
-        Log.e(TAG, "" + msg);
+    public static void e(@Nullable String msg) {
+        Log.e(TAG, String.valueOf(msg));
         EventBus.getDefault().post(new LogEvent(String.format("【E/%s】=>>>", TAG) + msg));
     }
 
-    public static void e(String tag, String msg) {
-        Log.e(tag, msg);
+    public static void e(String tag, @Nullable String msg) {
+        Log.e(tag, String.valueOf(msg));
         EventBus.getDefault().post(new LogEvent(String.format("【E/%s】=>>>", tag) + msg));
     }
 
-    public static void i(String msg) {
-        Log.i(TAG, msg);
+    public static void i(@Nullable String msg) {
+        Log.i(TAG, String.valueOf(msg));
         EventBus.getDefault().post(new LogEvent(String.format("【I/%s】=>>>", TAG) + msg));
     }
 
-    public static void i(String tag, String msg) {
-        Log.i(tag, msg);
+    public static void i(String tag,@Nullable String msg) {
+        Log.i(tag, String.valueOf(msg));
         EventBus.getDefault().post(new LogEvent(String.format("【I/%s】=>>>", tag) + msg));
     }
 }
