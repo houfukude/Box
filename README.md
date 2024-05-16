@@ -1,5 +1,9 @@
 # Box
 
+![Build](https://shields.io/github/actions/workflow/status/houfukude/Box/generate-apk-release.yml?branch=main&logo=github&label=Build)
+[![Download](https://img.shields.io/github/v/release/houfukude/Box?color=orange&logoColor=orange&label=Download&logo=DocuSign)](https://github.com/houfukude/Box/releases/latest)
+[![Total](https://shields.io/github/downloads/houfukude/Box/total?logo=Bookmeter&label=Counts&logoColor=yellow&color=yellow)](https://github.com/houfukude/Box/releases)
+
 === Source Code - Editing the app default settings ===
 /src/main/java/com/github/tvbox/osc/base/App.java
 
@@ -33,3 +37,7 @@
 不依赖特定仓库，默认编译仓库即为自动更新的源路径
 
 PS 极度依赖 **BUILD_TIME** 这个参数进行全局判断 包括在 workflow 和 更新模块
+
+#### 20240516 修复 详情页图片错误导致的崩溃
+
+优化了代码

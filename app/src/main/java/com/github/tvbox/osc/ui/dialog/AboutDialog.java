@@ -54,7 +54,7 @@ public class AboutDialog extends BaseDialog {
         public DownloadItem(ApiGithubData data) {
             // GitHub Release 页面上的 name 即为版本号 也可以替换成 tag_name
             // this.version = info.tagName;
-            this.version = data.name;
+            this.version = data.tagName;
             try {
                 Date current = new SimpleDateFormat("yyyyMMdd_HHmm", Locale.CHINA)
                         .parse(BuildConfig.VERSION_NAME.replace("1.0.", ""));
@@ -65,7 +65,7 @@ public class AboutDialog extends BaseDialog {
                     this.isNewVersion = current.before(newVersion);
                 }
                 // 默认第一个发现的 apk 为更新用的apk
-                // 如有根本不同的CPU架构进行分包 则需要细化判断
+                // TODO: 如有根本不同的CPU架构进行分包 则需要细化判断
                 for (ApiGithubData.AssetsItem asset : data.assets) {
                     if (APK_TYPE.equals(asset.contentType)) {
                         this.downloadURL = asset.browserDownloadUrl;
