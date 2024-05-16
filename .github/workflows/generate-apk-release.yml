@@ -50,10 +50,13 @@ jobs:
           ./gradlew assembleRelease  --build-cache --parallel --daemon --warning-mode all
 
       - name: Release - ${{ env.build_time }}
-        uses: softprops/action-gh-release@v1
+        uses: ncipollo/release-action@v1
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          makeLatest: true
+          generateReleaseNotes: true
+          artifacts: ${{ env.main_project_module }}/build/outputs/apk/release/*.apk
           name: ${{ env.build_time }}
-          body: ${{ github.event.head_commit.message }}
-          tag_name: ${{ env.build_time }}
-          files: ${{ env.main_project_module }}/build/outputs/apk/release/*.apk
+          tag: ${{ env.build_time }}
+
 
