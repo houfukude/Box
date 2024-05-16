@@ -13,25 +13,32 @@ jobs:
     # runs-on: self-hosted
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v3
 
       - name: Set timezone
         uses: MathRobin/timezone-action@v1.1
         with:
           timezoneLinux: 'Asia/Shanghai'
 
-      - name: Set Up JDK
+      # Set Current Date As Env Variable
+      - name: Set current date as env variable
+        run: echo "build_time=$(date +'%Y%m%d_%H%M')" >> $GITHUB_ENV
+
+      - name: Set Up JDK  - ${{ env.build_time }}
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu' # See 'Supported distributions' for available options
           java-version: '17'
           cache: 'gradle'
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+      - name: Change wrapper permissions
+        run: chmod +x ./gradlew
+
+      - name: Create keystore
+        run: echo "${{ secrets.SIGNING_KEY }}" | base64 -d > ./TVBoxOSC.jks
 
       # Create APK Release
-      - name: Build ${{ github.repository }} - ${{ env.main_project_module }}
+      - name: Build ${{ github.repository }} - ${{ env.main_project_module }} - ${{ env.build_time }}
         env:
           REPO: ${{ github.repository }}
           BUILD_TIME: ${{ env.build_time }}
@@ -39,11 +46,7 @@ jobs:
           KEY_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }} # TVBoxOSC
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }} # TVBoxOSC
         run: |
-          echo "${{ secrets.SIGNING_KEY }}" | base64 -d > ./TVBoxOSC.jks
-          echo "build_time=$(date +'%Y%m%d_%H%M')" >> $GITHUB_ENV
-          chmod +x ./gradlew
           ./gradlew clean
-          echo "${{ env.build_time }}"
           ./gradlew assembleRelease  --build-cache --parallel --daemon --warning-mode all
 
       - name: Release - ${{ env.build_time }}
