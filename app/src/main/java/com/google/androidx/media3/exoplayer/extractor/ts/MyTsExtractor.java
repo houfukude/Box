@@ -636,7 +636,16 @@ public final class MyTsExtractor implements Extractor {
             if (mode == MODE_HLS && id3Reader == null) {
                 // Setup an ID3 track regardless of whether there's a corresponding entry, in case one
                 // appears intermittently during playback. See [Internal: b/20261500].
-                TsPayloadReader.EsInfo id3EsInfo = new TsPayloadReader.EsInfo(TS_STREAM_TYPE_ID3, null, null, Util.EMPTY_BYTE_ARRAY);
+                // For media3 v 1.1.1
+                // TsPayloadReader.EsInfo id3EsInfo = new TsPayloadReader.EsInfo(TS_STREAM_TYPE_ID3, null, null, Util.EMPTY_BYTE_ARRAY);
+                // For media3 v 1.3.1
+                TsPayloadReader.EsInfo id3EsInfo = new TsPayloadReader.EsInfo(
+                        TS_STREAM_TYPE_ID3,
+                        null,
+                        TsPayloadReader.EsInfo.AUDIO_TYPE_UNDEFINED,
+                        null,
+                        Util.EMPTY_BYTE_ARRAY
+                );
                 id3Reader = payloadReaderFactory.createPayloadReader(TS_STREAM_TYPE_ID3, id3EsInfo);
                 if (id3Reader != null) {
                     id3Reader.init(
@@ -783,6 +792,7 @@ public final class MyTsExtractor implements Extractor {
             return new TsPayloadReader.EsInfo(
                     streamType,
                     language,
+                    TsPayloadReader.EsInfo.AUDIO_TYPE_UNDEFINED,
                     dvbSubtitleInfos,
                     Arrays.copyOfRange(data.getData(), descriptorsStartPosition, descriptorsEndPosition));
         }

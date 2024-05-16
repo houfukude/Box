@@ -140,6 +140,16 @@
 -keep class com.kingja.loadsir.** {*;}
 #gson
 # Gson specific classes
+# Gson uses generic type information stored in a class file when working with
+# fields. Proguard removes such information by default, keep it.
+-keepattributes Signature
+
+# This is also needed for R8 in compat mode since multiple
+# optimizations will remove the generic signature such as class
+# merging and argument removal. See:
+# https://r8.googlesource.com/r8/+/refs/heads/main/compatibility-faq.md#troubleshooting-gson-gson
+-keep class com.google.gson.reflect.TypeToken { *; }
+-keep class * extends com.google.gson.reflect.TypeToken
 -dontwarn sun.misc.**
 #-keep class com.google.gson.stream.** { *; }
 # Application classes that will be serialized/deserialized over Gson
@@ -203,7 +213,8 @@
 -dontwarn jcifs.**
 
 # 实体类
-#-keep class com.github.tvbox.osc.bean.** { *; }
+# Application classes that will be serialized/deserialized over Gson
+-keep class com.github.tvbox.osc.bean.** { *; }
 -keep class com.github.tvbox.osc.ui.fragment.homes.**{*;}
 #CardView
 -keep class com.github.tvbox.osc.ui.tv.widget.card.**{*;}
